@@ -1,39 +1,18 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SiteController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
+Route::get('/', [SiteController::class, 'index'])->name('home');
+Route::get('/article/{id}', [SiteController::class, 'show'])->name('article.show');
 
-// Главная
-Route::get('/', function () {
-    return view('welcome');
-});
-
-// О нас
-Route::get('/about', function () {
-    return view('about');
-});
-
-// Контакты — с передачей данных
+Route::view('/about', 'about')->name('about');
 Route::get('/contacts', function () {
     $contacts = [
         'email' => 'news@example.com',
         'phone' => '+7 915 888 99 99',
         'address' => 'Москва Россия',
-        'social' => [
-            'telegram' => 'https://t.me/news_site',
-            'github' => 'https://github.com/MaxOnn27'
-        ]
+        'social' => ['telegram' => 'https://t.me/news_site', 'github' => 'https://github.com/MaxOnn27']
     ];
-
     return view('contacts', compact('contacts'));
-});
+})->name('contacts');

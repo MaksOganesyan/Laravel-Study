@@ -2,14 +2,19 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MainController;
+use App\Http\Controllers\AuthController;
 
 // Главная — новости
 Route::get('/', [MainController::class, 'index']);
 
+//  Маршруты для регистрации
+Route::get('/signin', [AuthController::class, 'create'])->name('signin');
+Route::post('/signin', [AuthController::class, 'registration']);
+
 // Галерея
 Route::get('/gallery/{id}', [MainController::class, 'gallery']);
 
-// О нас и Контакты — старые страницы
+// О нас и Контакты 
 Route::view('/about', 'about');
 Route::get('/contacts', function () {
     return view('contacts', [

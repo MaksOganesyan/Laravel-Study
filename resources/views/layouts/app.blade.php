@@ -15,6 +15,7 @@
                     <a class="nav-link" href="/">Главная</a>
                     <a class="nav-link" href="/about">О нас</a>
                     <a class="nav-link" href="/contacts">Контакты</a>
+                    <a class="nav-link" href="{{ route('signin') }}">Регистрация</a>
                 </div>
             </div>
         </nav>

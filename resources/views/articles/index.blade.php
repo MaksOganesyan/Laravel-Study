@@ -69,7 +69,7 @@
         @endforeach
     </div>
 
-    <!-- Красивая пагинация -->
+    <!--пагинация -->
     <div class="d-flex justify-content-center mt-5">
         {{ $articles->links('vendor.pagination.bootstrap-5') }}
     </div>

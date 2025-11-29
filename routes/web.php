@@ -14,7 +14,7 @@ Route::post('/signin', [AuthController::class, 'registration']);
 // Галерея
 Route::get('/gallery/{id}', [MainController::class, 'gallery']);
 
-Route::get('/articles', [ArticleController::class, 'index'])->name('articles.index');
+Route::resource('articles', ArticleController::class)->except(['show']);
 
 // О нас и Контакты 
 Route::view('/about', 'about');

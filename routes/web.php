@@ -1,18 +1,23 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\SiteController;
+use App\Http\Controllers\MainController;
 
-Route::get('/', [SiteController::class, 'index'])->name('home');
-Route::get('/article/{id}', [SiteController::class, 'show'])->name('article.show');
+// Главная — новости
+Route::get('/', [MainController::class, 'index']);
 
-Route::view('/about', 'about')->name('about');
+// Галерея
+Route::get('/gallery/{id}', [MainController::class, 'gallery']);
+
+// О нас и Контакты — старые страницы
+Route::view('/about', 'about');
 Route::get('/contacts', function () {
-    $contacts = [
-        'email' => 'news@example.com',
-        'phone' => '+7 915 888 99 99',
-        'address' => 'Москва Россия',
-        'social' => ['telegram' => 'https://t.me/news_site', 'github' => 'https://github.com/MaxOnn27']
-    ];
-    return view('contacts', compact('contacts'));
-})->name('contacts');
+    return view('contacts', [
+        'contacts' => [
+            'email' => 'news@example.com',
+            'phone' => '+7 915 888 99 99',
+            'address' => 'Москва Россия',
+            'social' => ['telegram' => 't.me/news', 'github' => 'github.com']
+        ]
+    ]);
+});

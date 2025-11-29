@@ -16,6 +16,7 @@
                     <a class="nav-link" href="/about">О нас</a>
                     <a class="nav-link" href="/contacts">Контакты</a>
                     <a class="nav-link" href="{{ route('signin') }}">Регистрация</a>
+                    <a class="nav-link" href="/articles">Все новости </a>
                 </div>
             </div>
         </nav>

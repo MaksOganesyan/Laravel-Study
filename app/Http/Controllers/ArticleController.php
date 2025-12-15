@@ -19,61 +19,67 @@ class ArticleController extends Controller
         return view('articles.create');
     }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'title'             => 'required|string|max:255',
-            'short_description' => 'required|string',
-            'content'           => 'required|string',
-            'preview_image'     => 'required|image|mimes:jpg,jpeg,png|max:2048',
-            'published_at'      => 'required|date',
-        ]);
+   public function store(Request $request)
+{
+    $request->validate([
+        'title' => 'required|string|max:255',
+        'short_description' => 'required|string',
+        'content' => 'required|string',
+        'preview_image' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+        'published_at' => 'required|date',
+    ]);
 
-        $path = $request->file('preview_image')->store('news', 'public');
+    $filename = time() . '_' . $request->preview_image->getClientOriginalName();
+    $request->preview_image->move(public_path('storage/news'), $filename);
 
-        Article::create([
-            'title'             => $request->title,
-            'short_description' => $request->short_description,
-            'content'           => $request->content,
-            'preview_image'     => $path,
-            'full_image'        => $path,
-            'published_at'      => $request->published_at,
-        ]);
+    Article::create([
+        'title' => $request->title,
+        'short_description' => $request->short_description,
+        'content' => $request->content,
+        'preview_image' => $filename,  // только имя файла
+        'full_image' => $filename,
+        'published_at' => $request->published_at,
+    ]);
 
-        return redirect()->route('articles.index')->with('success', 'Новость добавлена!');
+    return redirect()->route('articles.index')->with('success', 'Новость добавлена!');
+}
+
+public function update(Request $request, Article $article)
+{
+    $request->validate([
+        'title' => 'required|string|max:255',
+        'short_description' => 'required|string',
+        'content' => 'required|string',
+        'preview_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        'published_at' => 'required|date',
+    ]);
+
+    $data = $request->only(['title', 'short_description', 'content', 'published_at']);
+
+    if ($request->hasFile('preview_image')) {
+        // Удаляем старую
+        if ($article->preview_image && file_exists(public_path('storage/news/' . $article->preview_image))) {
+            unlink(public_path('storage/news/' . $article->preview_image));
+        }
+
+        $filename = time() . '_' . $request->preview_image->getClientOriginalName();
+        $request->preview_image->move(public_path('storage/news'), $filename);
+
+        $data['preview_image'] = $filename;
+        $data['full_image'] = $filename;
     }
+
+    $article->update($data);
+
+    return redirect()->route('articles.index')->with('success', 'Новость обновлена!');
+}
 
     public function edit(Article $article)
     {
         return view('articles.edit', compact('article'));
     }
 
-    public function update(Request $request, Article $article)
-    {
-        $request->validate([
-            'title'             => 'required|string|max:255',
-            'short_description' => 'required|string',
-            'content'           => 'required|string',
-            'preview_image'     => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'published_at'      => 'required|date',
-        ]);
-
-        $data = $request->only(['title', 'short_description', 'content', 'published_at']);
-
-        if ($request->hasFile('preview_image')) {
-            if ($article->preview_image) {
-                Storage::disk('public')->delete($article->preview_image);
-            }
-            $path = $request->file('preview_image')->store('news', 'public');
-            $data['preview_image'] = $path;
-            $data['full_image']    = $path;
-        }
-
-        $article->update($data);
-
-        return redirect()->route('articles.index')->with('success', 'Новость обновлена!');
-    }
-
+   
     public function destroy(Article $article)
     {
         if ($article->preview_image) {

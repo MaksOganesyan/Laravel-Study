@@ -8,51 +8,73 @@ use App\Http\Controllers\CommentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+/*
+|--------------------------------------------------------------------------
+| Публичные маршруты (доступны всем, даже гостям)
+|--------------------------------------------------------------------------
+*/
+
 // Главная страница
 Route::get('/', [MainController::class, 'index'])->name('home');
 
-// Галерея (старая)
-Route::get('/gallery/{id}', [MainController::class, 'gallery']);
+// Список всех новостей
+Route::get('/articles', [ArticleController::class, 'index'])->name('articles.index');
 
-// Регистрация
-Route::get('/register', [AuthController::class, 'create'])->name('register.form');
-Route::post('/register', [AuthController::class, 'store'])->name('register');
-// Авторизация
-Route::get('/login', [AuthController::class, 'loginForm'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
+// Просмотр одной новости
+Route::get('/articles/{article}', [ArticleController::class, 'show'])->name('articles.show');
 
-// Выход (один раз!)
+// Статические страницы
+Route::view('/about', 'about')->name('about');
+Route::view('/contacts', 'contacts')->name('contacts'); // теперь через view, данные в шаблоне или контроллере
+
+// Старая галерея (если нужна)
+Route::get('/gallery/{id}', [MainController::class, 'gallery'])->name('gallery');
+
+/*
+|--------------------------------------------------------------------------
+| Авторизация и регистрация (гости)
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('guest')->group(function () {
+    // Регистрация
+    Route::get('/register', [AuthController::class, 'create'])->name('register.form');
+    Route::post('/register', [AuthController::class, 'store'])->name('register');
+
+    // Вход
+    Route::get('/login', [AuthController::class, 'loginForm'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Выход (только авторизованным)
+|--------------------------------------------------------------------------
+*/
+
 Route::post('/logout', function (Request $request) {
     Auth::logout();
     $request->session()->invalidate();
     $request->session()->regenerateToken();
-    return redirect('/')->with('success', 'Вы вышли из аккаунта!');
-})->name('logout');
+    return redirect('/')->with('success', 'Вы успешно вышли!');
+})->middleware('auth')->name('logout');
 
-// Страница одной новости
-Route::get('/articles/{article}', [ArticleController::class, 'show'])->name('articles.show');
+/*
+|--------------------------------------------------------------------------
+| Защищённые маршруты (только авторизованным пользователям)
+|--------------------------------------------------------------------------
+*/
 
-// Комментарии
-Route::post('/articles/{article}/comments', [CommentController::class, 'store'])->name('comments.store');
-Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
-
-// Защищённые маршруты (только для авторизованных)
 Route::middleware('auth')->group(function () {
+
+    // Комментарии: добавление и удаление
+    Route::post('/articles/{article}/comments', [CommentController::class, 'store'])
+         ->name('comments.store');
+
+    Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])
+         ->name('comments.destroy');
+
+    // CRUD для статей (создание, редактирование, удаление) — только авторизованным
+    // Просмотр и список публичные, поэтому except(['index', 'show'])
     Route::resource('articles', ArticleController::class)->except(['index', 'show']);
 });
-
-// Публичные маршруты для статей (список и просмотр)
-Route::get('/articles', [ArticleController::class, 'index'])->name('articles.index');
-
-// О нас и Контакты
-Route::view('/about', 'about')->name('about');
-Route::get('/contacts', function () {
-    return view('contacts', [
-        'contacts' => [
-            'email' => 'news@example.com',
-            'phone' => '+7 915 888 99 99',
-            'address' => 'Москва Россия',
-            'social' => ['telegram' => 't.me/news', 'github' => 'github.com']
-        ]
-    ]);
-})->name('contacts');

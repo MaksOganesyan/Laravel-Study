@@ -3,23 +3,18 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\Comment;
+use App\Models\User;
+use App\Models\Article;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Comment>
- */
 class CommentFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    protected $model = Comment::class;
+
     public function definition(): array
-{
-    return [
-        'article_id' => \App\Models\Article::inRandomOrder()->first()->id ?? 1,
-        'author' => fake()->name(),
-        'content' => fake()->paragraph(2),
-    ];
-}
+    {
+        return [
+            'content' => fake()->paragraph(1), // один абзац — нормальный комментарий
+        ];
+    }
 }

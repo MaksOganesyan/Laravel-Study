@@ -2,18 +2,35 @@
 
 namespace Database\Seeders;
 
-use App\Models\Article;
 use Illuminate\Database\Seeder;
+use App\Models\Article;
+use App\Models\User;
+use App\Models\Role;
 
 class DatabaseSeeder extends Seeder
 {
-   public function run(): void
-{
-    $articles = \App\Models\Article::factory(10)->create();
+    /**
+     * Seed the application's database.
+     */
+    public function run(): void
+    {
+        // Сначала обязательно роли
+        $this->call(RoleSeeder::class);
 
-    
-    foreach ($articles as $article) {
-        \App\Models\Comment::factory(rand(3, 8))->create(['article_id' => $article->id]);
+        // Создаём 10 обычных читателей
+        User::factory(10)->create([
+            'role_id' => Role::where('name', 'reader')->first()->id,
+        ]);
+
+        // Создаём одного модератора (для тестов)
+        User::factory()->create([
+            'name' => 'Moderator',
+            'email' => 'moderator@example.com',
+            'password' => bcrypt('password'), // или Hash::make('password')
+            'role_id' => Role::where('name', 'moderator')->first()->id,
+        ]);
+
+        // Создаём 20 статей с комментариями
+        Article::factory(20)->create();
     }
-}
 }

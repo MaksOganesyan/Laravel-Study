@@ -2,35 +2,56 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    // Регистрация — форма
     public function create()
     {
-        return view('auth.signin');
+        return view('auth.register');
     }
 
-    public function registration(Request $request)
+    // Регистрация — сохранение
+    public function store(Request $request)
     {
-        // Валидация данных
-        $validated = $request->validate([
+        $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:6',
+            'password' => 'required|min:8|confirmed',
         ]);
 
-        //   В JSON
-        $response = [
-            'success' => true,
-            'message' => 'Регистрация успешна!',
-            'data' => [
-                'name' => $validated['name'],
-                'email' => $validated['email'],
-                'registered_at' => now()->format('Y-m-d H:i:s')
-            ]
-        ];
+        User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
 
-        return response()->json($response, 201);
+        return redirect('/login')->with('success', 'Регистрация успешна! Теперь войдите в аккаунт.');
+    }
+
+    // Логин — форма
+    public function loginForm()
+    {
+        return view('auth.login');
+    }
+
+    // Логин — обработка
+    public function login(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        if (Auth::attempt($request->only('email', 'password'))) {
+            $request->session()->regenerate();
+            return redirect('/')->with('success', 'Вы вошли в аккаунт!');
+        }
+
+        return back()->withErrors(['email' => 'Неверный email или пароль']);
     }
 }

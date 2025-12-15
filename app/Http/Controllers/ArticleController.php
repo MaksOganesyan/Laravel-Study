@@ -93,4 +93,13 @@ public function update(Request $request, Article $article)
 {
     return view('articles.show', compact('article'));
 }
+
+public function logout(Request $request)
+{
+    Auth::logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    return redirect('/')->with('success', 'Вы вышли из аккаунта');
+}
 }

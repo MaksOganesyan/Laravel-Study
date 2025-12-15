@@ -83,4 +83,8 @@ class ArticleController extends Controller
 
         return redirect()->route('articles.index')->with('success', 'Новость удалена!');
     }
+    public function show(Article $article)
+{
+    return view('articles.show', compact('article'));
+}
 }

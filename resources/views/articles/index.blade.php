@@ -1,4 +1,4 @@
-@extends('layouts.app')
+`@extends('layouts.app')
 @section('title', 'Все новости')
 
 @section('content')
@@ -40,8 +40,8 @@
                         </p>
 
                         <div class="mt-auto d-flex gap-2">
-                            <a href="#" class="btn btn-primary flex-fill">
-                                Читать полностью →
+                           <a href="{{ route('articles.show', $article) }}" class="btn btn-primary w-100">
+                            Читать полностью →
                             </a>
                         </div>
 

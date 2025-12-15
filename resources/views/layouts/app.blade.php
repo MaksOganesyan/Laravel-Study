@@ -8,21 +8,26 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container">
-                <a class="navbar-brand" href="/">Новости</a>
-                <div class="navbar-nav ms-auto">
-                    <a class="nav-link" href="/">Главная</a>
-                    <a class="nav-link" href="/about">О нас</a>
-                    <a class="nav-link" href="/contacts">Контакты</a>
-                    <a class="nav-link" href="{{ route('signin') }}">Регистрация</a>
-                    <a class="nav-link" href="/articles">Все новости </a>
-                </div>
-            </div>
-        </nav>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="/">Новости</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="/">Главная</a></li>
+                <li class="nav-item"><a class="nav-link" href="/about">О нас</a></li>
+                <li class="nav-item"><a class="nav-link" href="/contacts">Контакты</a></li>
+                <li class="nav-item"><a class="nav-link" href="/signin">Регистрация</a></li>
+                <li class="nav-item"><a class="nav-link" href="/articles">Все новости</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
     </header>
 
-    <main class="container my-5">
+    <main class="container mt-5">
         @yield('content')
     </main>
 

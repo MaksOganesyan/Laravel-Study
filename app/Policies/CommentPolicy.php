@@ -7,31 +7,28 @@ use App\Models\Comment;
 
 class CommentPolicy
 {
-    // Просмотр комментариев — всем (и даже гостям)
     public function viewAny(?User $user): bool
     {
-        return true;
+        return true; // все видят список
     }
 
     public function view(?User $user, Comment $comment): bool
     {
-        return true;
+        return true; // все видят один комментарий
     }
 
-    // Создание комментария — только авторизованным (читатели и модераторы)
     public function create(User $user): bool
     {
-        return true; // модератор и так пройдёт через Gate::before
+        return true; // авторизованные могут создавать (читатель и модератор)
     }
 
-    // Редактирование — только владелец или модератор
+    // Редактирование — только автор или модератор (модератор пройдёт через Gate::before)
     public function update(User $user, Comment $comment): bool
     {
         return $user->id === $comment->user_id;
-        // модератор пройдёт через Gate::before и получит true автоматически
     }
 
-    // Удаление — только владелец или модератор
+    // Удаление — только автор или модератор
     public function delete(User $user, Comment $comment): bool
     {
         return $user->id === $comment->user_id;

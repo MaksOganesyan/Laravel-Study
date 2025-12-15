@@ -36,6 +36,27 @@ class CommentController extends Controller
         return back()->with('success', 'Комментарий добавлен!');
     }
 
+    public function edit(Comment $comment)
+{
+    $this->authorize('update', $comment);
+
+    // Передаём статью для возврата назад
+    return view('comments.edit', compact('comment'));
+}
+
+public function update(Request $request, Comment $comment)
+{
+    $this->authorize('update', $comment);
+
+    $request->validate([
+        'content' => 'required|string|min:5|max:2000',
+    ]);
+
+    $comment->update($request->only('content'));
+
+    return redirect()->route('articles.show', $comment->article)
+                     ->with('success', 'Комментарий обновлён!');
+}
     /**
      * Удаление комментария — только автор или модератор
      */

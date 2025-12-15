@@ -67,12 +67,18 @@
                 <p class="mt-3 mb-0">{{ nl2br(e($comment->content)) }}</p>
             </div>
 
-            @can('delete', $comment)
-    <form action="{{ route('comments.destroy', $comment) }}" method="POST">
+            @can('update', $comment)
+    <a href="{{ route('comments.edit', $comment) }}" class="btn btn-sm btn-warning me-2">
+        Редактировать
+    </a>
+@endcan
+
+@can('delete', $comment)
+    <form action="{{ route('comments.destroy', $comment) }}" method="POST" class="d-inline">
         @csrf
         @method('DELETE')
         <button type="submit" class="btn btn-sm btn-danger"
-                onclick="return confirm('Точно удалить комментарий?')">
+                onclick="return confirm('Точно удалить?')">
             Удалить
         </button>
     </form>

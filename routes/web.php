@@ -73,6 +73,10 @@ Route::middleware('auth')->group(function () {
 
     Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])
          ->name('comments.destroy');
+    Route::get('/comments/{comment}/edit', [CommentController::class, 'edit'])
+     ->name('comments.edit');
+    Route::put('/comments/{comment}', [CommentController::class, 'update'])
+     ->name('comments.update');
 
     // CRUD для статей (создание, редактирование, удаление) — только авторизованным
     // Просмотр и список публичные, поэтому except(['index', 'show'])

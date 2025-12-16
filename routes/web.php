@@ -8,11 +8,6 @@ use App\Http\Controllers\CommentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-/*
-|--------------------------------------------------------------------------
-| Публичные маршруты (доступны всем, даже гостям)
-|--------------------------------------------------------------------------
-*/
 
 // Главная страница
 Route::get('/', [MainController::class, 'index'])->name('home');
@@ -25,15 +20,13 @@ Route::get('/articles/{article}', [ArticleController::class, 'show'])->name('art
 
 // Статические страницы
 Route::view('/about', 'about')->name('about');
-Route::view('/contacts', 'contacts')->name('contacts'); // теперь через view, данные в шаблоне или контроллере
+Route::view('/contacts', 'contacts')->name('contacts'); 
 
 // Старая галерея (если нужна)
 Route::get('/gallery/{id}', [MainController::class, 'gallery'])->name('gallery');
 
 /*
-|--------------------------------------------------------------------------
-| Авторизация и регистрация (гости)
-|--------------------------------------------------------------------------
+Авторизация и регистрация (гости)
 */
 
 Route::middleware('guest')->group(function () {
@@ -47,9 +40,7 @@ Route::middleware('guest')->group(function () {
 });
 
 /*
-|--------------------------------------------------------------------------
 | Выход (только авторизованным)
-|--------------------------------------------------------------------------
 */
 
 Route::post('/logout', function (Request $request) {
@@ -60,9 +51,8 @@ Route::post('/logout', function (Request $request) {
 })->middleware('auth')->name('logout');
 
 /*
-|--------------------------------------------------------------------------
+
 | Защищённые маршруты (только авторизованным пользователям)
-|--------------------------------------------------------------------------
 */
 
 Route::middleware('auth')->group(function () {
@@ -77,8 +67,5 @@ Route::middleware('auth')->group(function () {
      ->name('comments.edit');
     Route::put('/comments/{comment}', [CommentController::class, 'update'])
      ->name('comments.update');
-
-    // CRUD для статей (создание, редактирование, удаление) — только авторизованным
-    // Просмотр и список публичные, поэтому except(['index', 'show'])
     Route::resource('articles', ArticleController::class)->except(['index', 'show']);
 });

@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Storage;   
+use Illuminate\Support\Facades\Auth;      // На всякий случай, если где-то понадобится
+use App\Jobs\SendNewsNotification;
+
 
 class ArticleController extends Controller
 {
@@ -19,87 +22,82 @@ class ArticleController extends Controller
         return view('articles.create');
     }
 
-   public function store(Request $request)
-{
-    $request->validate([
-        'title' => 'required|string|max:255',
-        'short_description' => 'required|string',
-        'content' => 'required|string',
-        'preview_image' => 'required|image|mimes:jpg,jpeg,png|max:2048',
-        'published_at' => 'required|date',
-    ]);
+    public function store(Request $request)
+    {
+        $request->validate([
+            'title'             => 'required|string|max:255',
+            'short_description' => 'required|string',
+            'content'           => 'required|string',
+            'preview_image'     => 'required|image|mimes:jpg,jpeg,png|max:2048',
+            'published_at'      => 'required|date',
+        ]);
 
-    $filename = time() . '_' . $request->preview_image->getClientOriginalName();
-    $request->preview_image->move(public_path('storage/news'), $filename);
+        // Сохраняем картинку через Storage (правильный способ)
+        $path = $request->file('preview_image')->store('news', 'public');
+        // $path будет примерно "news/1700000000_photo.jpg"
 
-    Article::create([
-        'title' => $request->title,
-        'short_description' => $request->short_description,
-        'content' => $request->content,
-        'preview_image' => $filename,  
-        'full_image' => $filename,
-        'published_at' => $request->published_at,
-    ]);
+        Article::create([
+            'title'             => $request->title,
+            'short_description' => $request->short_description,
+            'content'           => $request->content,
+            'preview_image'     => $path,
+            'full_image'        => $path,   
+            'published_at'      => $request->published_at,
+        ]);
+        SendNewsNotification::dispatch($request->title);
+        return redirect()->route('articles.index')->with('success', 'Новость добавлена! Уведомление отправлено в очередь.');
 
-    return redirect()->route('articles.index')->with('success', 'Новость добавлена!');
-}
-
-public function update(Request $request, Article $article)
-{
-    $request->validate([
-        'title' => 'required|string|max:255',
-        'short_description' => 'required|string',
-        'content' => 'required|string',
-        'preview_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-        'published_at' => 'required|date',
-    ]);
-
-    $data = $request->only(['title', 'short_description', 'content', 'published_at']);
-
-    if ($request->hasFile('preview_image')) {
-        // Удаляем старую
-        if ($article->preview_image && file_exists(public_path('storage/news/' . $article->preview_image))) {
-            unlink(public_path('storage/news/' . $article->preview_image));
-        }
-
-        $filename = time() . '_' . $request->preview_image->getClientOriginalName();
-        $request->preview_image->move(public_path('storage/news'), $filename);
-
-        $data['preview_image'] = $filename;
-        $data['full_image'] = $filename;
     }
 
-    $article->update($data);
-
-    return redirect()->route('articles.index')->with('success', 'Новость обновлена!');
-}
+    public function show(Article $article)
+    {
+        return view('articles.show', compact('article'));
+    }
 
     public function edit(Article $article)
     {
         return view('articles.edit', compact('article'));
     }
 
-   
+    public function update(Request $request, Article $article)
+    {
+        $request->validate([
+            'title'             => 'required|string|max:255',
+            'short_description' => 'required|string',
+            'content'           => 'required|string',
+            'preview_image'     => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'published_at'      => 'required|date',
+        ]);
+
+        $data = $request->only(['title', 'short_description', 'content', 'published_at']);
+
+        if ($request->hasFile('preview_image')) {
+            // Удаляем старую картинку, если была
+            if ($article->preview_image) {
+                Storage::disk('public')->delete($article->preview_image);
+            }
+
+            $path = $request->file('preview_image')->store('news', 'public');
+            $data['preview_image'] = $path;
+            $data['full_image']     = $path;
+        }
+
+        $article->update($data);
+
+        return redirect()->route('articles.index')
+                         ->with('success', 'Новость обновлена!');
+    }
+
     public function destroy(Article $article)
     {
+        // Удаляем картинку через Storage
         if ($article->preview_image) {
             Storage::disk('public')->delete($article->preview_image);
         }
+
         $article->delete();
 
-        return redirect()->route('articles.index')->with('success', 'Новость удалена!');
+        return redirect()->route('articles.index')
+                         ->with('success', 'Новость удалена!');
     }
-    public function show(Article $article)
-{
-    return view('articles.show', compact('article'));
-}
-
-public function logout(Request $request)
-{
-    Auth::logout();
-    $request->session()->invalidate();
-    $request->session()->regenerateToken();
-
-    return redirect('/')->with('success', 'Вы вышли из аккаунта');
-}
 }

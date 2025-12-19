@@ -68,11 +68,15 @@ Route::middleware('auth')->group(function () {
      ->name('comments.edit');
     Route::put('/comments/{comment}', [CommentController::class, 'update'])
      ->name('comments.update');
-    Route::resource('articles', ArticleController::class)->except(['index', 'show']);
 });
 
 Route::middleware('auth')->prefix('admin')->group(function () {
     Route::get('/comments', [CommentModerationController::class, 'index'])->name('admin.comments.index');
     Route::post('/comments/{comment}/approve', [CommentModerationController::class, 'approve'])->name('comments.approve');
     Route::post('/comments/{comment}/reject', [CommentModerationController::class, 'reject'])->name('comments.reject');
+    Route::get('/articles/create', [ArticleController::class, 'create'])->name('articles.create');
+    Route::post('/articles', [ArticleController::class, 'store'])->name('articles.store');
+    Route::get('/articles/{article}/edit', [ArticleController::class, 'edit'])->name('articles.edit');
+    Route::put('/articles/{article}', [ArticleController::class, 'update'])->name('articles.update');
+    Route::delete('/articles/{article}', [ArticleController::class, 'destroy'])->name('articles.destroy');
 });

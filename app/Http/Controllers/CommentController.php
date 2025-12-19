@@ -14,26 +14,24 @@ class CommentController extends Controller
      */
     public function store(Request $request, Article $article)
     {
-        // Защищаем роут middleware('auth') или проверяем здесь
         if (!Auth::check()) {
             return back()->with('error', 'Только зарегистрированные пользователи могут комментировать.');
         }
 
-        // Проверка через Policy (может создавать комментарий)
         $this->authorize('create', Comment::class);
 
-        // Валидация — теперь только текст комментария
         $request->validate([
             'content' => 'required|string|min:5|max:2000',
         ]);
 
         // Создаём комментарий от имени текущего пользователя
         $article->comments()->create([
-            'content' => $request->content,
-            'user_id' => Auth::id(), // ← обязательно заполняем
-        ]);
+    'content' => $request->content,
+    'user_id' => Auth::id(),
+    'approved' => false,  
+]);
 
-        return back()->with('success', 'Комментарий добавлен!');
+      return back()->with('success', 'Ваш комментарий отправлен на модерацию. Он появится после проверки.');
     }
 
     public function edit(Comment $comment)

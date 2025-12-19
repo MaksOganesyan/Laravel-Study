@@ -36,7 +36,7 @@ class ArticleController extends Controller
         'title' => $request->title,
         'short_description' => $request->short_description,
         'content' => $request->content,
-        'preview_image' => $filename,  // только имя файла
+        'preview_image' => $filename,  
         'full_image' => $filename,
         'published_at' => $request->published_at,
     ]);

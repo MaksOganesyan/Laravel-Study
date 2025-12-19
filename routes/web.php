@@ -7,6 +7,7 @@ use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\CommentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Admin\CommentModerationController;
 
 
 // Главная страница
@@ -68,4 +69,10 @@ Route::middleware('auth')->group(function () {
     Route::put('/comments/{comment}', [CommentController::class, 'update'])
      ->name('comments.update');
     Route::resource('articles', ArticleController::class)->except(['index', 'show']);
+});
+
+Route::middleware('auth')->prefix('admin')->group(function () {
+    Route::get('/comments', [CommentModerationController::class, 'index'])->name('admin.comments.index');
+    Route::post('/comments/{comment}/approve', [CommentModerationController::class, 'approve'])->name('comments.approve');
+    Route::post('/comments/{comment}/reject', [CommentModerationController::class, 'reject'])->name('comments.reject');
 });

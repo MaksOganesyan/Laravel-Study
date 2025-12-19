@@ -36,6 +36,9 @@
                                 <span class="nav-link text-white">Привет, {{ Auth::user()->name }}!</span>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link" href="{{ route('admin.comments.index') }}">Модерация комментариев</a>
+                            </li>
+                            <li class="nav-item">
                                 <form action="{{ route('logout') }}" method="POST" class="d-inline">
                                     @csrf
                                     <button type="submit" class="nav-link btn btn-link text-white p-0 m-0 border-0 bg-transparent">
@@ -62,4 +65,4 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
+</html>

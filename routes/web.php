@@ -21,7 +21,20 @@ Route::get('/articles/{article}', [ArticleController::class, 'show'])->name('art
 
 // Статические страницы
 Route::view('/about', 'about')->name('about');
-Route::view('/contacts', 'contacts')->name('contacts'); 
+
+Route::get('/contacts', function () {
+    $contacts = [
+        'email'   => 'info@example.com',
+        'phone'   => '+7 (900) 000-00-00',
+        'address' => 'г. Москва, ул. Примерная, д. 1',
+        'social'  => [
+            'telegram' => 'https://t.me/example',
+            'github'   => 'https://github.com/example',
+        ],
+    ];
+
+    return view('contacts', compact('contacts'));
+})->name('contacts');
 
 // Старая галерея (если нужна)
 Route::get('/gallery/{id}', [MainController::class, 'gallery'])->name('gallery');

@@ -5,9 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Article;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;   
-use Illuminate\Support\Facades\Auth;      // На всякий случай, если где-то понадобится
 use App\Jobs\SendNewsNotification;
-
 
 class ArticleController extends Controller
 {
@@ -32,21 +30,23 @@ class ArticleController extends Controller
             'published_at'      => 'required|date',
         ]);
 
-        // Сохраняем картинку через Storage (правильный способ)
+        // Сохраняем картинку в storage/app/public/news
         $path = $request->file('preview_image')->store('news', 'public');
-        // $path будет примерно "news/1700000000_photo.jpg"
 
+        // Создаём статью
         Article::create([
             'title'             => $request->title,
             'short_description' => $request->short_description,
             'content'           => $request->content,
-            'preview_image'     => $path,
-            'full_image'        => $path,   
+            'preview_image'     => $path, // хранится как news/имя_файла.png
+            'full_image'        => $path, // тоже news/имя_файла.png
             'published_at'      => $request->published_at,
         ]);
-        SendNewsNotification::dispatch($request->title);
-        return redirect()->route('articles.index')->with('success', 'Новость добавлена! Уведомление отправлено в очередь.');
 
+        SendNewsNotification::dispatch($request->title);
+
+        return redirect()->route('articles.index')
+                         ->with('success', 'Новость добавлена! Уведомление отправлено в очередь.');
     }
 
     public function show(Article $article)
@@ -72,7 +72,7 @@ class ArticleController extends Controller
         $data = $request->only(['title', 'short_description', 'content', 'published_at']);
 
         if ($request->hasFile('preview_image')) {
-            // Удаляем старую картинку, если была
+            // Удаляем старую картинку, если есть
             if ($article->preview_image) {
                 Storage::disk('public')->delete($article->preview_image);
             }
@@ -90,7 +90,6 @@ class ArticleController extends Controller
 
     public function destroy(Article $article)
     {
-        // Удаляем картинку через Storage
         if ($article->preview_image) {
             Storage::disk('public')->delete($article->preview_image);
         }

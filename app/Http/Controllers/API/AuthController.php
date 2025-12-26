@@ -7,11 +7,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Controller;  // ← Важно!
 
 class AuthController extends Controller
 {
-    // Регистрация (POST /api/register)
+    // Регистрация
     public function register(Request $request)
     {
         $request->validate([
@@ -30,12 +30,12 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Регистрация успешна',
-            'user' => $user,
-            'token' => $token
+            'token' => $token,
+            'user' => $user
         ], 201);
     }
 
-    // Логин (POST /api/login)
+    // Логин
     public function login(Request $request)
     {
         $request->validate([
@@ -45,7 +45,7 @@ class AuthController extends Controller
 
         if (!Auth::attempt($request->only('email', 'password'))) {
             throw ValidationException::withMessages([
-                'email' => ['Неверный email или пароль'],
+                'email' => 'Неверные данные',
             ]);
         }
 
@@ -54,18 +54,16 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Вход выполнен',
-            'user' => $user,
-            'token' => $token
+            'token' => $token,
+            'user' => $user
         ]);
     }
 
-    // Выход (POST /api/logout) — только с токеном
+    // Выход
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
 
-        return response()->json([
-            'message' => 'Выход выполнен'
-        ]);
+        return response()->json(['message' => 'Выход выполнен']);
     }
 }

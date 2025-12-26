@@ -53,15 +53,14 @@ return redirect()->route('articles.index')->with('success', 'Новость до
     }
 
     public function show(Article $article)
-
-    {
-        auth()->user()->unreadNotifications
+{
+    // Отмечаем ВСЕ уведомления о этой статье как прочитанные для текущего пользователя
+    auth()->user()->unreadNotifications
         ->where('data->article_id', $article->id)
         ->markAsRead();
 
     return view('articles.show', compact('article'));
-    }
-
+}
     public function edit(Article $article)
     {
         return view('articles.edit', compact('article'));

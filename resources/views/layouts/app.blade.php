@@ -36,6 +36,25 @@
                                 <a class="nav-link" href="{{ route('register') }}">Регистрация</a>
                             </li>
                         @else
+                        <li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+        Уведомления
+        @if(auth()->user()->unreadNotifications->count() > 0)
+            <span class="badge bg-danger">{{ auth()->user()->unreadNotifications->count() }}</span>
+        @endif
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end">
+        @forelse(auth()->user()->unreadNotifications as $notification)
+            <li>
+                <a class="dropdown-item" href="{{ route('articles.show', $notification->data['article_id']) }}">
+                    {{ $notification->data['message'] }}
+                </a>
+            </li>
+        @empty
+            <li><a class="dropdown-item text-muted">Нет новых уведомлений</a></li>
+        @endforelse
+    </ul>
+</li>
                             <li class="nav-item">
                                 <span class="nav-link text-white">Привет, {{ Auth::user()->name }}!</span>
                             </li>

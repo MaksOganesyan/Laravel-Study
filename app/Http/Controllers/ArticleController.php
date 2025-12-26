@@ -6,7 +6,9 @@ use App\Models\Article;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;   
 use App\Jobs\SendNewsNotification;
-
+use App\Models\User;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\NewArticleNotification;
 class ArticleController extends Controller
 {
     public function index()
@@ -34,24 +36,30 @@ class ArticleController extends Controller
         $path = $request->file('preview_image')->store('news', 'public');
 
         // Создаём статью
-        Article::create([
-            'title'             => $request->title,
-            'short_description' => $request->short_description,
-            'content'           => $request->content,
-            'preview_image'     => $path, // хранится как news/имя_файла.png
-            'full_image'        => $path, // тоже news/имя_файла.png
-            'published_at'      => $request->published_at,
-        ]);
+        $article = Article::create([
+    'title'             => $request->title,
+    'short_description' => $request->short_description,
+    'content'           => $request->content,
+    'preview_image'     => $path,
+    'full_image'        => $path,
+    'published_at'      => $request->published_at,
+]);
 
-        SendNewsNotification::dispatch($request->title);
+// Отправляем всем зарегистрированным пользователям, кроме текущего
+$users = User::where('id', '!=', auth()->id())->get();
+Notification::send($users, new NewArticleNotification($article));
 
-        return redirect()->route('articles.index')
-                         ->with('success', 'Новость добавлена! Уведомление отправлено в очередь.');
+return redirect()->route('articles.index')->with('success', 'Новость добавлена!');
     }
 
     public function show(Article $article)
+
     {
-        return view('articles.show', compact('article'));
+        auth()->user()->unreadNotifications
+        ->where('data->article_id', $article->id)
+        ->markAsRead();
+
+    return view('articles.show', compact('article'));
     }
 
     public function edit(Article $article)

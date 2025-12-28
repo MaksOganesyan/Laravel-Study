@@ -7,8 +7,9 @@
         <div class="col-lg-10">
             <h1 class="mb-4">{{ $article['name'] }}</h1>
 
-            <img src="{{ asset('storage/news/' . $article['full_image']) }}"
-                 class="img-fluid rounded shadow mb-4" alt="{{ $article['name'] }}">
+           <img src="{{ asset('storage/news/' . $article['preview_image']) }}"
+           class="img-fluid rounded shadow mb-4"
+           alt="{{ $article['name'] }}">
 
             <div class="bg-light p-4 rounded">
                 <p class="text-muted"><strong>Дата:</strong> {{ $article['date'] }}</p>

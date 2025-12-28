@@ -7,9 +7,10 @@
     <h1 class="mb-4">{{ $article->title }}</h1>
 
     @if($article->preview_image)
-        <img src="{{ asset('storage/news/' . $article->preview_image) }}"
-             class="img-fluid rounded shadow mb-4"
-             alt="{{ $article->title }}">
+       <img src="{{ asset('storage/' . $article->preview_image) }}"
+     class="card-img-top"
+     style=" object-fit: cover;"
+     alt="{{ $article->title }}">
     @endif
 
     @if($article->short_description)

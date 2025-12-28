@@ -38,7 +38,6 @@ class ArticleController extends Controller
 
         // Сохраняем картинку в storage/app/public/news
         $path = $request->file('preview_image')->store('news', 'public');
-
         // Создаём статью
         $article = Article::create([
             'title'             => $request->title,

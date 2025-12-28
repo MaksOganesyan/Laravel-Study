@@ -22,10 +22,10 @@
         @foreach($articles as $article)
             <div class="col">
                 <div class="card h-100 shadow-sm hover-shadow position-relative">
-                    <img src="{{ asset('storage/' . $article->preview_image) }}"
-                         class="card-img-top"
-                         style="height: 220px; object-fit: cover;"
-                         alt="{{ $article->title }}">
+                    <img src="{{ asset('storage/news/' . basename($article->preview_image)) }}"
+     class="card-img-top"
+     style="height: 220px; object-fit: cover;"
+     alt="{{ $article->title }}">
 
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title">{{ $article->title }}</h5>

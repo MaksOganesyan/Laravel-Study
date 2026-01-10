@@ -7,7 +7,7 @@
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
-    <form action="{{ route('login') }}" method="POST">
+    <form autocomplete="off" action="{{ route('login') }}" method="POST">
         @csrf
         <div class="mb-3">
             <label>Email</label>

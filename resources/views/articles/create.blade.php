@@ -15,7 +15,7 @@
 
     <div class="card">
         <div class="card-body">
-            <form action="{{ route('articles.store') }}" method="POST" enctype="multipart/form-data">
+            <form autocomplete="off" action="{{ route('articles.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
                 <div class="mb-3">

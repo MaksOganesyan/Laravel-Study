@@ -23,7 +23,7 @@
                             @csrf
                             <button class="btn btn-success btn-sm">Одобрить</button>
                         </form>
-                        <form action="{{ route('comments.reject', $comment) }}" method="POST" class="d-inline">
+                        <form autocomplete="off" action="{{ route('comments.reject', $comment) }}" method="POST" class="d-inline">
                             @csrf
                             <button class="btn btn-danger btn-sm" onclick="return confirm('Отклонить?')">Отклонить</button>
                         </form>

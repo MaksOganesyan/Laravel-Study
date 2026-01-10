@@ -3,37 +3,27 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Validation\ValidationException;
 use Throwable;
 
 class Handler extends ExceptionHandler
 {
-    /**
-     * The list of the inputs that are never flashed to the session on validation exceptions.
-     *
-     * @var array<int, string>
-     */
-    protected $dontFlash = [
-        'current_password',
-        'password',
-        'password_confirmation',
-    ];
-
-    /**
-     * Register the exception handling callbacks for the application.
-     */
-    public function register(): void
-    {
-        $this->reportable(function (Throwable $e) {
-            //
-        });
-    }
     public function render($request, Throwable $exception)
-{
-    // Включаем полный дебаг
-    if (config('app.debug')) {
+    {
+        // Для API всегда JSON
+        if ($request->expectsJson() || $request->is('api/*')) {
+            if ($exception instanceof ValidationException) {
+                return response()->json([
+                    'message' => 'Ошибка валидации',
+                    'errors' => $exception->errors(),
+                ], 422);
+            }
+
+            return response()->json([
+                'message' => 'Ошибка сервера',
+            ], 500);
+        }
+
         return parent::render($request, $exception);
     }
-
-    return parent::render($request, $exception);
-}
 }

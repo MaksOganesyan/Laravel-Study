@@ -17,7 +17,7 @@
         </div>
     @endif
 
-    <form action="{{ route('register') }}" method="POST">
+    <form autocomplete="off" action="{{ route('register') }}" method="POST">
         @csrf
         <div class="mb-3">
             <label>Имя</label>

@@ -52,7 +52,7 @@
                                 <i class="bi bi-pencil"></i>
                             </a>
 
-                            <form action="{{ route('articles.destroy', $article) }}" 
+                            <form autocomplete="off" action="{{ route('articles.destroy', $article) }}" 
                                   method="POST" 
                                   class="d-inline"
                                   onsubmit="return confirm('Точно удалить новость «{{ addslashes($article->title) }}»?')">

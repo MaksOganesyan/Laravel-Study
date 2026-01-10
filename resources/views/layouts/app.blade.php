@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Новостной сайт')</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -64,7 +65,7 @@
         <a class="nav-link" href="{{ route('admin.comments.index') }}">Модерация комментариев</a>
     </li>
     <li class="nav-item">
-        <form action="{{ route('logout') }}" method="POST" class="d-inline">
+        <form  autocomplete="off" action="{{ route('logout') }}" method="POST" class="d-inline">
             @csrf
             <button type="submit" class="nav-link btn btn-link text-white p-0 m-0 border-0 bg-transparent">
                 Выход
@@ -84,7 +85,7 @@
 
     <footer class="bg-light py-4 mt-auto">
         <div class="container text-center">
-            <p class="mb-0">Максим Оганесян, группа 241-321</p>
+            <p class="mb-0">Оганесян Максим, группа 241-321</p>
         </div>
     </footer>
 

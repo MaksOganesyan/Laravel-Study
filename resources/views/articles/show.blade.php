@@ -34,7 +34,7 @@
         <div class="card mb-5">
             <div class="card-header"><h4>Добавить комментарий</h4></div>
             <div class="card-body">
-                <form action="{{ route('comments.store', $article) }}" method="POST">
+                <form autocomplete="off" action="{{ route('comments.store', $article) }}" method="POST">
                     @csrf
                     <textarea name="content" 
                               class="form-control @error('content') is-invalid @enderror" 
@@ -75,7 +75,7 @@
                     @endcan
 
                     @can('delete', $comment)
-                        <form action="{{ route('comments.destroy', $comment) }}" method="POST" class="d-inline">
+                        <form autocomplete="off" action="{{ route('comments.destroy', $comment) }}" method="POST" class="d-inline">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-sm btn-danger"

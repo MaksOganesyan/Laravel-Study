@@ -1,0 +1,40 @@
+/* Меняем основной цвет (primary) — кнопки, ссылки */
+.btn-primary {
+    background-color: #6f42c1 !important; /* зелёный */
+    border-color: #6f42c1 !important;
+}
+
+.btn-primary:hover {
+    background-color: #218838 !important;
+    border-color: #1e7e34 !important;
+}
+
+/* Меняем цвет шапки (navbar) */
+.navbar {
+    background-color: #343a40 !important; /* тёмно-серый */
+}
+
+/* Меняем цвет текста в шапке */
+.navbar .nav-link {
+    color: #ffffff !important;
+}
+
+/* Меняем шрифт для всего сайта */
+body {
+    font-family: 'Roboto', sans-serif !important;
+}
+
+/* Цвет фона карточек */
+.card {
+    background-color: #f8f9fa !important;
+}
+
+/* Цвет заголовков */
+h1, h2, h3, h4, h5, h6 {
+    color: #212529 !important;
+}
+
+/* Цвет текста */
+.text-muted {
+    color: #6c757d !important;
+}
